@@ -2,10 +2,12 @@ const express = require('express');
 const router = require('./routes/index');
 const app = express();
 const db = require('./services/db');
+const cookieParser = require('cookie-parser');
 
 app.use(express.json());
-app.use('/api', router);
+app.use(cookieParser());
 
+app.use('/api', router);
 app.get('/', (req, res) => {
   res.send('I dey here');
 });
