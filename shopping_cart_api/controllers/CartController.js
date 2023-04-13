@@ -1,47 +1,48 @@
 const db = require('../services/db');
 const Cart = require('../model/product');
 
-exports.addNewCart = async (req, res, next) => {
-  const { item, quantity, price } = req.body;
-  await Cart.create({
-    item, quantity, price, total: price * quantity
-  }).then(cart => {
+exports.addItem = async (req, res, next) => {
+  const items = req.body.items;
+  const username = req.username;
+  const total = items.map(item => {
+    const totalArray = [];
+    const itemCost = parseInt(item.price * item.quantity);
+    totalArray.push(itemCost);
+    return totalArray;
+  }).reduce((accumulator, currentVal) =>
+    parseInt(accumulator) + parseInt(currentVal)
+  );
+  await Cart.findOneAndUpdate(
+    { username },
+    { $set: { items, total, username } },
+    { upsert: true, new: true }
+  ).then(cart => {
     res.json({ cart });
   });
 };
 
-exports.retrieveItems = async (req, res, next) => {
+exports.retrieveAllCart = async (req, res, next) => {
   const items = await db.getAll();
   res.status(201).json({
-    message: 'Items reterieved',
+    message: 'All Carts reterieved',
     items
   });
 };
 
-exports.getItem = async (req, res, next) => {
-  const id = req.params.id;
-  console.log(id);
-  const items = await db.getOne(id);
+exports.getCart = async (req, res, next) => {
+  const username = req.username;
+  const items = await db.getOne(username);
   res.status(201).json({
-    message: ' Item reterieved',
+    message: ' Cart reterieved',
     items
   });
 };
 
-exports.deleteItem = async (req, res, next) => {
-  const id = req.params.id;
-  const items = await db.deleteItem({ _id: id });
+exports.deleteCart = async (req, res, next) => {
+  const username = req.username;
+  const items = await db.deleteItem(username);
   res.status(201).json({
-    message: 'Items deleted',
+    message: 'Cart deleted',
     items
-  });
-};
-
-exports.updateItem = async (req, res, next) => {
-  const { id, item, quantity, price } = req.body;
-  await db.updateItem(id, item, quantity, price).then(cart => {
-    res.json({ cart });
-  }).catch(err => {
-    res.json({ error: err.message });
   });
 };
