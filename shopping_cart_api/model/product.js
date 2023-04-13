@@ -9,7 +9,7 @@ const cartSchema = new Schema({
     quantity: { type: Number, default: 1 }
   }],
   total: { type: Number, default: 0 },
-  user: {
+  username: {
     type: String,
     ref: 'user'
   }
