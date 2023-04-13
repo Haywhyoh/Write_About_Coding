@@ -8,9 +8,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api', router);
-app.get('/', (req, res) => {
-  res.send('I dey here');
-});
+
 db.isAlive();
 
 app.listen(3000, () => {
