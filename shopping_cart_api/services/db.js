@@ -18,27 +18,16 @@ class DbClient {
     });
   }
 
-  async getOne (id) {
-    return Cart.findById(id);
+  async getOne (username) {
+    return Cart.findOne({ username });
   }
 
   async getAll () {
     return Cart.find({});
   }
 
-  async deleteItem (id) {
-    return Cart.deleteOne({ _id: id });
-  }
-
-  async updateItem (id, item, quantity, price) {
-    const total = price * quantity;
-    Cart.updateOne({ id }, { item, quantity, price, total }, (err, updatedCart) => {
-      if (err) {
-        return err;
-      }
-      return updatedCart;
-    }
-    );
+  async deleteItem (username) {
+    return Cart.findOneAndDelete({ username: username });
   }
 }
 
